@@ -1,0 +1,131 @@
+{% extends 'blog/base.html' %}
+{% load crispy_forms_tags %}
+{% block title %} Post Detail {% endblock title %}
+{% block content %}
+    <article class="media content-section">
+        <div class="row g-0">
+            <div class="col mt-3 ps-3">
+                <img src="{{ object.author.profile.image.url }}" class="rounded-circle article-img">
+            </div>
+            <div class="col-lg-10 media-body">
+                <div class="article-metadata">
+                    <span>Author: {{ object.author }}</span>
+                    <small class="px-2 text-muted">Posted: {{ object.date_created | timesince}} ago</small>
+                    <small class="px-2 text-muted">category: {{ post.categories.first }}</small>
+
+                    {% if object.author == user %}
+                    <div>
+                        <a href="{% url 'post_update' object.id %}" class="btn btn-outline-secondary btn-sm my-1"> Edit </a>
+                        <a href="{% url 'post_delete' object.id %}" class="btn btn-outline-danger btn-sm my-1"> Delete </a>
+                    </div>
+                    
+                    {% endif %}
+
+                </div>
+                <div class="container" style="height: 250px; overflow-y: scroll;">
+                    <h2 class="article-title">{{ object.title }}</h2>
+                    <p class="article-content">{{ object.content }}</p>
+                    {% if object.image %}
+                    <img src="{{ object.image.url }}" class="rounded mb-3 img-fluid " alt="Post image">
+                    {% endif %}
+                    {% if object.video %}
+                    <video src="{{ object.video.url }}" type="{{ object.video.content_type }}" class="rounded mb-3 mx-auto img-fluid " controls>
+                    </video>
+                    {% endif %}
+                </div>
+
+                {% if user.is_authenticated %}
+                <form action="{% url 'like_post' post.pk %}" method="post">
+                    {% csrf_token %}
+                    {% if liked %}
+                
+                        <div class="ms-auto my-2">
+                            <button name= "post_id" value="{{ post.id }}" class="btn btn-sm btn-danger">DisLike</button>
+                            <a href="{% url 'comment' post.id %}" class="btn btn-sm btn-primary">Comment</a>
+                        </div>
+                        
+                  
+                    {% else %}
+                    <div class="ms-auto my-2">
+                        <button name= "post_id" value="{{ post.id }}" class="btn btn-sm btn-primary">Like</button>
+                        <a href="{% url 'comment' post.id %}" class="btn btn-sm btn-primary">Comment</a>
+                    </div>
+                    {% endif %}
+                </form>
+
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <!-- main comment section -->
+                            <div class="comment-section mt-4">
+                                {% for comment in post.comments.all %}
+                                <div class="comment">
+                                    <div class="d-flex">
+                                        <div class="flex-shrink-0">
+                                            <!-- comment avatar -->
+                                            <img src="{{ comment.user.profile.image.url }}" alt="{{ comment.user.username }}" class="rounded-circle" width="50" height="50">
+                                        </div>
+                                        <div class="flex-grow-1 ms-3">
+                                            <!-- comment body -->
+                                            <div class="comment-body">
+                                                <h5 class="comment-user">{{ comment.user.username }}</h5>
+                                                <p class="comment-content">{{ comment.content }}</p>
+                                            </div>
+                                            <!-- reply form for this comment -->
+                                            <div id="reply-form" class="reply-form mt-3">
+                                                <form method="post" action="{% url 'add_reply' comment.id %}">
+                                                    {% csrf_token %}
+                                                    <div class="mb-3">
+                                                        <label for="reply_content" class="form-label">Reply to {{ comment.user.username }}:</label>
+                                                        <textarea class="form-control" id="reply_content" name="content" rows="3" required></textarea>
+                                                    </div>
+                                                    <button type="submit" class="btn btn-primary">Reply</button>
+                                                </form>
+                                            </div>
+                                            <!-- nested replies to this comment -->
+                                            {% for reply in comment.replies.all %}
+                                            <div class="comment reply">
+                                                <div class="d-flex">
+                                                    <div class="flex-shrink-0">
+                                                        <!-- reply avatar -->
+                                                        <img src="{{ reply.user.profile.image.url }}" alt="{{ reply.user.username }}" class="rounded-circle" width="50" height="50">
+                                                    </div>
+                                                    <div class="flex-grow-1 ms-3">
+                                                        <!-- reply body -->
+                                                        <div class="comment-body">
+                                                            <h5 class="comment-user">{{ reply.user.username }}</h5>
+                                                            <p class="comment-content">{{ reply.content }}</p>
+                                                        </div>
+                                                        <!-- reply form for this reply -->
+                                                        <div id="reply-form" class="reply-form mt-3">
+                                                            <form method="post" action="{% url 'add_reply' comment.id %}">
+                                                                {% csrf_token %}
+                                                                <div class="mb-3">
+                                                                    <label for="reply_content" class="form-label">Reply to {{ reply.user.username }}:</label>
+                                                                    <textarea class="form-control" id="reply_content" name="content" rows="3" required></textarea>
+                                                                </div>
+                                                                <button type="submit" class="btn btn-primary">Reply</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+
+                {% endif %}
+
+            </div>
+        </div>
+    </article>
+{% endblock content %}
+

@@ -1,0 +1,26 @@
+{% extends 'blog/base.html' %}
+{% block title %} Category_detail {% endblock title %}
+{% block content %}
+
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8">
+        <h2>Posts in {{ category.name }}</h2>
+        <hr>
+        {% for post in category.posts.all %}
+          <div class="card mb-4">
+            <div class="card-body">
+              <h3 class="card-title">{{ post.title }}</h3>
+              <p class="card-text">{{ post.content }}</p>
+              <a href="{% url 'post_detail' post_id=post.id %}" class="btn btn-primary">Read more</a>
+            </div>
+          </div>
+        {% empty %}
+          <p>No posts found.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

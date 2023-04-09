@@ -1,0 +1,28 @@
+{% extends 'blog/base.html' %}
+{% block title %} Home {% endblock title %}
+{% block content %}
+    <a href="{% url 'post_create' %}" class="btn btn-primary my-2">Publish News</a>
+    {% for post in posts %}
+        <article class="media content-section">
+            <div class="row g-0">
+                <div class="col mt-3 ps-3">
+                    <img src="{{ post.author.profile.image.url }}" class="rounded-circle article-img">
+                </div>
+                <div class="col-lg-10 media-body">
+                    <div class="article-metadata">
+                        <span>Author: {{ post.author }}</span>
+                        <small class="px-2 text-muted">Posted: {{ post.date_created | timesince}} ago</small>
+                        <small class="px-2 text-muted">category: {{ post.category }}</small>
+                    </div>
+                    <h2><a class="article-title nav-link " href="{% url 'post_detail' post.id %}">{{ post.title | truncatechars:40 }}</a></h2>
+                    <div class="article-metadata ">
+                        <span>Reads: {{ post.reads }}</span>
+                        <small class="px-2 text-muted">Comments: {{ post.comments_count }}</small>
+                        <small class="px-2 text-muted">Likes: {{ post.total_likes }}</small>
+                    </div>
+                </div>
+            </div>
+        </article>
+    {% endfor %}  
+{% endblock content %}
+
