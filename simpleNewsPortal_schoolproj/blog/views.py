@@ -152,31 +152,6 @@ def add_reply(request, comment_id):
     context = {'form': form}
     return render(request, 'add_reply.html', context)
 
-#
-# @login_required()
-# def search(request):
-#     query = request.GET.get('query')
-#     category = request.GET.get('category')
-#
-#     if query and category:
-#         # Filter posts by category and search query
-#         posts = Post.objects.filter(category__name__icontains=category, title__icontains=query)
-#     elif query:
-#         # Filter posts by search query only
-#         posts = Post.objects.filter(title__icontains=query)
-#     elif category:
-#         # Filter posts by category only
-#         posts = Post.objects.filter(category__name__icontains=category)
-#     else:
-#         # No search query or category selected, return all posts
-#         posts = Post.objects.all()
-#
-#     context = {
-#         'posts': posts,
-#         'query': query,
-#         'category': category,
-#     }
-#     return render(request, 'blog/search_results.html', context)
 
 @login_required()
 def search(request):
@@ -187,10 +162,10 @@ def search(request):
     print(num_likes)
 
     if query and category:
-        # Filter posts by category and search query
+        # Filter posts by category and search keyword
         posts = Post.objects.filter(category__name__icontains=category, title__icontains=query)
     elif query:
-        # Filter posts by search query only
+        # Filter posts by search keyword only
         posts = Post.objects.filter(title__icontains=query)
     elif category:
         # Filter posts by category only
