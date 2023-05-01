@@ -71,18 +71,33 @@
                       </select>
                     </div>
                   </div>
-                  <div class="col-md-8">
+
+                  <div class="col-md-4">
                     <div class="mb-3">
-                      <label for="query" class="form-label">Search</label>
+                      <label for="num_views" class="form-label">Reads</label>
+                      <input type="text" name="num_views" id="num_views" class="form-control" placeholder="num_views">
+                    </div>
+                  </div>
+
+                  <div class="col-md-4">
+                    <div class="mb-3">
+                      <label for="num_likes" class="form-label">Likes</label>
+                      <input type="text" name="num_likes" id="num_likes" class="form-control" placeholder="num_likes">
+                    </div>
+                  </div>
+
+                  <div class="col-md-4">
+                    <div class="mb-3">
+                      <label for="query" class="form-label">Keywords</label>
                       <input type="text" name="query" id="query" class="form-control" placeholder="Enter search query">
                     </div>
                   </div>
+
                 </div>
                 <button type="submit" class="btn btn-primary">Search</button>
               </form>
               
               <h3>News Categories</h3>
-              
               <ul class="list-group">
                 {% for category in categories %}
                 <li class="list-group-item list-group-item-light"><a href="{% url 'category_detail' category.id %}"></a>{{ category.name }}: {{ category.num_posts }}</li>

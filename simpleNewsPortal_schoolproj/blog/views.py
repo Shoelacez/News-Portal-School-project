@@ -39,7 +39,7 @@ class PostListview(ListView):
     ordering = ['-date_created']
 
 
-class PostDetailView(DetailView):
+class PostDetailView(LoginRequiredMixin, DetailView):
     model = Post
 
     def get_context_data(self, **kwargs):
@@ -152,11 +152,39 @@ def add_reply(request, comment_id):
     context = {'form': form}
     return render(request, 'add_reply.html', context)
 
+#
+# @login_required()
+# def search(request):
+#     query = request.GET.get('query')
+#     category = request.GET.get('category')
+#
+#     if query and category:
+#         # Filter posts by category and search query
+#         posts = Post.objects.filter(category__name__icontains=category, title__icontains=query)
+#     elif query:
+#         # Filter posts by search query only
+#         posts = Post.objects.filter(title__icontains=query)
+#     elif category:
+#         # Filter posts by category only
+#         posts = Post.objects.filter(category__name__icontains=category)
+#     else:
+#         # No search query or category selected, return all posts
+#         posts = Post.objects.all()
+#
+#     context = {
+#         'posts': posts,
+#         'query': query,
+#         'category': category,
+#     }
+#     return render(request, 'blog/search_results.html', context)
 
 @login_required()
 def search(request):
     query = request.GET.get('query')
     category = request.GET.get('category')
+    num_views = request.GET.get('num_views')
+    num_likes = request.GET.get('num_likes')
+    print(num_likes)
 
     if query and category:
         # Filter posts by category and search query
@@ -171,13 +199,23 @@ def search(request):
         # No search query or category selected, return all posts
         posts = Post.objects.all()
 
+    if num_views:
+        # Filter posts by number of reads
+        posts = posts.filter(reads=num_views)
+
+    if num_likes:
+        # Filter posts by number of likes
+        # posts = posts.filter(likes=num_likes)
+        posts = posts.annotate(num_likes=Count('likes')).filter(num_likes=num_likes)
+
     context = {
         'posts': posts,
         'query': query,
         'category': category,
+        'num_views': num_views,
+        'num_likes': num_likes,
     }
     return render(request, 'blog/search_results.html', context)
-
 
 def about(request):
     return render(request, 'blog/about.html')
